@@ -52,7 +52,7 @@ class BrushSettingsNode(bpy.types.Node, PencilNodeMixin):
         set=lambda self, val: None)
     color_map_opacity: bpy.props.FloatProperty(default=1.0, min=0.0, max=1.0, subtype="FACTOR", override={'LIBRARY_OVERRIDABLE'})
 
-    size: bpy.props.FloatProperty(default=1.0, min=0.001, max=100.0, soft_min=0.1, soft_max=20.0, subtype="PIXEL", override={'LIBRARY_OVERRIDABLE'})
+    size: bpy.props.FloatProperty(default=0.65, min=0.001, max=100.0, soft_min=0.1, soft_max=20.0, subtype="PIXEL", override={'LIBRARY_OVERRIDABLE'})
 
     # size map
     size_map_on: bpy.props.BoolProperty(default=False, override={'LIBRARY_OVERRIDABLE'})

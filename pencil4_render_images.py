@@ -254,8 +254,8 @@ def setup_image(image: bpy.types.Image, width: int, height: int):
 
 
 def setup_images(scene: bpy.types.Scene):
-    width = scene.render.resolution_x * scene.render.resolution_percentage // 100
-    height = scene.render.resolution_y * scene.render.resolution_percentage // 100
+    width = scene.render.resolution_x# * scene.render.resolution_percentage // 100
+    height = scene.render.resolution_y# * scene.render.resolution_percentage // 100
     for view_layer in scene.view_layers:
         (image, element_dict) = enumerate_images_from_compositor_nodes(view_layer)
         setup_image(image, width, height)

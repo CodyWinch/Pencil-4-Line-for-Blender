@@ -100,8 +100,10 @@ class PCL4_OT_NewLineSetOperator(PCL4_OT_Line_Mixin, bpy.types.Operator):
         # BrushSettings, BrushDetailsを生成
         v_brush_settings = line_set.create_new_node(line_set.find_input_socket_index(V_BRUSH_SOCKET_ID), node_tree)
         v_brush_detail = v_brush_settings.create_new_node(0, node_tree)
-        h_brush_settings = line_set.create_new_node(line_set.find_input_socket_index(H_BRUSH_SOCKET_ID), node_tree)
-        h_brush_detail = h_brush_settings.create_new_node(0, node_tree)
+
+        node_tree.links.new(v_brush_settings.outputs[0], line_set.inputs["H Brush Settings"])
+        # h_brush_settings = line_set.create_new_node(line_set.find_input_socket_index(H_BRUSH_SOCKET_ID), node_tree)
+        # h_brush_detail = h_brush_settings.create_new_node(0, node_tree)
 
         return {"FINISHED"}
 

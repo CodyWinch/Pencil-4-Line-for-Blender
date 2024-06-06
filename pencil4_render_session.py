@@ -39,8 +39,8 @@ def show_render_error(message = ""):
     print( f"Pencil+ 4 Line Render Error : {message}")
 
 def get_render_size(depsgraph: bpy.types.Depsgraph) -> tuple[int, int]:
-    width = depsgraph.scene.render.resolution_x * depsgraph.scene.render.resolution_percentage // 100
-    height = depsgraph.scene.render.resolution_y * depsgraph.scene.render.resolution_percentage // 100
+    width = depsgraph.scene.render.resolution_x# * depsgraph.scene.render.resolution_percentage // 100
+    height = depsgraph.scene.render.resolution_y# * depsgraph.scene.render.resolution_percentage // 100
     return (width, height)
 
 class Pencil4RenderSession:
@@ -220,8 +220,10 @@ class Pencil4RenderSession:
                         self.__curve_data[mesh] = pencil4line_for_blender.interm_curve_data(curve.materials, [x.material_index for x in curve.splines])
             
             if mesh is not None:
-                override_library = src_object.override_library
-                src_object = override_library.reference if override_library is not None else src_object
+                # Keep looping until we find the original ob
+                for i in range(10):
+                    override_library = src_object.override_library
+                    src_object = override_library.reference if override_library is not None else src_object
 
                 ungrouped_objects.add(src_object)
 

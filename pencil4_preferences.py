@@ -17,7 +17,7 @@ class PCL4_Preferences(bpy.types.AddonPreferences):
     bl_idname = __package__
 
     render_app_path: bpy.props.StringProperty(default="", subtype="FILE_PATH")
-    viewport_render_timeout: bpy.props.FloatProperty(default=2.0, min=0.5, max=10.0)
+    viewport_render_timeout: bpy.props.FloatProperty(default=10.0, min=0.5, max=300.0)
     abort_rendering_if_error_occur: bpy.props.BoolProperty(default=False)
 
     def draw(self, context):

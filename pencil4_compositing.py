@@ -17,12 +17,14 @@ class PCL4_OT_AddImageNode(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     view_layer: bpy.props.StringProperty(default = "", options = {'HIDDEN'})
+    scene: bpy.props.StringProperty(default = "", options = {'HIDDEN'})
     for_render_element: bpy.props.BoolProperty(default = False, options = {'HIDDEN'})
     target_element_ptr: bpy.props.StringProperty(default = "", options = {'HIDDEN'})
 
     def execute(self, context):
         pencil4_render_images.correct_duplicated_output_images(context.scene)
-        view_layer = context.scene.view_layers[self.view_layer]
+        scene = bpy.data.scenes[self.scene]
+        view_layer = scene.view_layers[self.view_layer]
         image = None
         if self.for_render_element:
             if self.target_element_ptr != "":
@@ -38,9 +40,14 @@ class PCL4_OT_AddImageNode(bpy.types.Operator):
             return {'CANCELLED'}
 
         view_layer.pencil4_line_outputs.rename_images(view_layer)
-        bpy.ops.node.add_node(type="CompositorNodeImage", use_transform=True)
-        context.active_node.image = image
-        return bpy.ops.node.translate_attach_remove_on_cancel('INVOKE_DEFAULT')
+        node = context.scene.node_tree.nodes.new('CompositorNodeImage')
+        node.location[0] = -1100
+        node.location[1] = -300
+        node.image = image
+        # bpy.ops.node.add_node(type="CompositorNodeImage", use_transform=True)
+        # context.active_node.image = image
+        return set()
+        # return bpy.ops.node.translate_attach_remove_on_cancel('INVOKE_DEFAULT')
 
     def invoke(self, context, event):
         space = context.space_data
@@ -58,11 +65,13 @@ class PCL4_OT_DeleteLineRenderElement(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     view_layer: bpy.props.StringProperty(default = "", options = {'HIDDEN'})
+    scene: bpy.props.StringProperty(default = "", options = {'HIDDEN'})
     target_element_ptr: bpy.props.StringProperty(default = "", options = {'HIDDEN'})
 
     def execute(self, context):
         pencil4_render_images.correct_duplicated_output_images(context.scene)
-        view_layer = context.scene.view_layers[self.view_layer]
+        scene = bpy.data.scenes[self.scene]
+        view_layer = scene.view_layers[self.view_layer]
         ptr = int(self.target_element_ptr)
         render_elements = view_layer.pencil4_line_outputs.render_elements
         for i, elem in enumerate(render_elements):
@@ -92,6 +101,7 @@ class PCL4_MT_ViewLayers(bpy.types.Menu):
         for view_layer in context.scene.view_layers:
             ops = layout.operator(PCL4_OT_AddImageNode.bl_idname, text=view_layer.name, translate=False)
             ops.view_layer = view_layer.name
+            ops.scene = context.scene.name
             ops.for_render_element = False
             ops.target_element_ptr = ""
 
@@ -106,6 +116,7 @@ class PCL4_MT_ElementAddDelete(bpy.types.Menu):
 
         ops = layout.operator(PCL4_OT_AddImageNode.bl_idname, text="Add", text_ctxt=Translation.ctxt)
         ops.view_layer = context.view_layer.name
+        ops.scene = context.scene.name
         ops.for_render_element = True
         ops.target_element_ptr = str(context.element.as_pointer())
 
@@ -124,6 +135,7 @@ class PCL4_MT_ElementSelector(bpy.types.Menu):
 
         ops = layout.operator(PCL4_OT_AddImageNode.bl_idname, text="New", text_ctxt=Translation.ctxt)
         ops.view_layer = context.view_layer.name
+        ops.scene = context.scene.name
         ops.for_render_element = True
         ops.target_element_ptr = ""
 

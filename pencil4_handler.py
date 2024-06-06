@@ -17,6 +17,7 @@ from .merge_helper import merge_helper
 from .node_tree import PencilNodeTree
 
 import bpy
+import os
 from bpy.app.handlers import persistent
 
 __session: RenderSession = None
@@ -75,9 +76,54 @@ def on_render_complete(scene: bpy.types.Scene):
 @persistent
 def on_post_frame_change(scene: bpy.types.Scene, depsgraph: bpy.types.Depsgraph):
     global __session
-    if __session is not None:
+
+    prefs = bpy.context.preferences.addons["goo-outputsetup"].preferences
+
+    if prefs.output_lineart and scene.frame_end >= scene.frame_current >= scene.frame_start:
+        render = bpy.context.scene.render
+
+        og_perc = render.resolution_percentage
+        og_format = render.image_settings.file_format
+        og_mode = render.image_settings.color_mode
+        og_depth = render.image_settings.color_depth
+
+        render.resolution_percentage = 110
+        render.image_settings.file_format = "PNG"
+        render.image_settings.color_mode = "RGBA"
+        render.image_settings.color_depth = "16"
+
+        if __session is None:
+            __session = RenderSession()
+            pencil4_viewport.ViewportLineRenderManager.in_render_session = True
+            pencil4_render_images.correct_duplicated_output_images(scene)
+
         __session.draw_line(depsgraph)
-    pencil4_viewport.ViewportLineRenderManager.invalidate_objects_cache()
+        pencil4_viewport.ViewportLineRenderManager.invalidate_objects_cache()
+
+        __session.cleanup_all()
+        __session = None
+        pencil4_viewport.ViewportLineRenderManager.in_render_session = False
+
+        for vl in scene.view_layers:
+            if vl.pencil4_line_outputs.output.main is not None:
+                out_fp = vl.pencil4_line_outputs.vector_output_base_path + vl.pencil4_line_outputs.vector_outputs[0].sub_path + ("%04d" % scene.frame_current) + '.png'
+                print(str(os.path.normpath(bpy.path.abspath((out_fp)))))
+                vl.pencil4_line_outputs.output.main.save_render(str(os.path.normpath(bpy.path.abspath((out_fp)))))
+
+                # THIS WAS MODIFIED AND I LOST THE MODIFICATIONS
+                # IT WOULD CHECK FOR IF THE EPS EXISTED AND THE TIF FILE DID NOT EXIST BEFORE RUNNING THE SAVE
+                # IT ALSO USED TIFS INSTEAD OF PNGS
+        
+        render.resolution_percentage = og_perc
+        render.image_settings.file_format = og_format
+        render.image_settings.color_mode = og_mode
+        render.image_settings.color_depth = og_depth
+
+    else:
+
+        if __session is not None:
+            __session.draw_line(depsgraph)
+        pencil4_viewport.ViewportLineRenderManager.invalidate_objects_cache()
 
 @persistent
 def on_save_pre(dummy):
