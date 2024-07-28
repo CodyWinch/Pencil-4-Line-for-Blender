@@ -82,12 +82,18 @@ class PCL4_OT_NewLineSetOperator(PCL4_OT_Line_Mixin, bpy.types.Operator):
     def execute(self, context):
         node_tree = context.space_data.edit_tree
 
+        v_brush_settings = None
+        for node in node_tree.nodes:
+            if node.select and hasattr(node, "brush_detail_node"):
+                v_brush_settings = node
+                break
+
         line = self.get_node(context)
         if line is None or len(line.inputs) == 0:
             return {"CANCELLED"}
 
-        for node in node_tree.nodes:
-            node.select = False
+        # for node in node_tree.nodes:
+        #     node.select = False
 
         if self.index < 0:
             line.inputs.move(len(line.inputs) - 1, 0)   # 末尾に存在する未接続のソケットを移動する
@@ -97,11 +103,21 @@ class PCL4_OT_NewLineSetOperator(PCL4_OT_Line_Mixin, bpy.types.Operator):
         line_set = line.create_new_node(self.index, node_tree)
         line.lineset_selected_index = self.index
 
+        line_set.name = line.name.split(" ")[1]
+
         # BrushSettings, BrushDetailsを生成
-        v_brush_settings = line_set.create_new_node(line_set.find_input_socket_index(V_BRUSH_SOCKET_ID), node_tree)
-        v_brush_detail = v_brush_settings.create_new_node(0, node_tree)
+
+        if v_brush_settings is None:
+            v_brush_settings = line_set.create_new_node(line_set.find_input_socket_index(V_BRUSH_SOCKET_ID), node_tree)
+
+        brush_det = node_tree.nodes.get("BRUSH DETAIL")
+        if brush_det is not None:
+            node_tree.links.new(brush_det.outputs[0], v_brush_settings.inputs[0])
+        else:
+            v_brush_detail = v_brush_settings.create_new_node(0, node_tree)
 
         node_tree.links.new(v_brush_settings.outputs[0], line_set.inputs["H Brush Settings"])
+        node_tree.links.new(v_brush_settings.outputs[0], line_set.inputs["V Brush Settings"])
         # h_brush_settings = line_set.create_new_node(line_set.find_input_socket_index(H_BRUSH_SOCKET_ID), node_tree)
         # h_brush_detail = h_brush_settings.create_new_node(0, node_tree)
 

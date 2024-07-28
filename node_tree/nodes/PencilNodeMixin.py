@@ -86,8 +86,8 @@ class PencilNodeMixin:
             i, socket = next(((i, x) for i, x in enumerate(self.inputs) if not x.is_linked and x.identifier == socket_identifier), (None, None))
             if socket is not None:
                 node_tree = context.space_data.edit_tree
-                for node in node_tree.nodes:
-                    node.select = False
+                # for node in node_tree.nodes:
+                #     node.select = False
                 return self.create_new_node(i, node_tree)
 
     def auto_create_node_when_property_on(self, context, socket_identifier):

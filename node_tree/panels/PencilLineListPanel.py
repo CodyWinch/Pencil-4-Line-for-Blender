@@ -296,8 +296,8 @@ class PCL4_OT_LineListNewItemOperator(bpy.types.Operator):
 
     def execute(self, context):
         node_tree = PencilNodeTree.tree_from_context(context)
-        for node in node_tree.nodes:
-            node.select = False
+        # for node in node_tree.nodes:
+        #     node.select = False
         lines = node_tree.enumerate_lines()
 
         new_node = node_tree.nodes.new(type=LineNode.bl_idname)
@@ -305,7 +305,7 @@ class PCL4_OT_LineListNewItemOperator(bpy.types.Operator):
         while(next((x for x in lines if abs(x.location[0] - location[0]) < 1 and abs(x.location[1] - location[1]) < 1), None)):
             location = [location[0], location[1] -200]
         new_node.location = location
-        new_node.name = LineNode.bl_label
+        new_node.name = node_tree.name.split("_LINEART")[0] + " TYPE Lines"
         new_node.select = True
         node_tree.nodes.active = new_node
         node_tree.set_selected_line(new_node)
