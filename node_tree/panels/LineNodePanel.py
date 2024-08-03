@@ -110,7 +110,7 @@ class PCL4_OT_NewLineSetOperator(PCL4_OT_Line_Mixin, bpy.types.Operator):
         if v_brush_settings is None:
             v_brush_settings = line_set.create_new_node(line_set.find_input_socket_index(V_BRUSH_SOCKET_ID), node_tree)
 
-        brush_det = node_tree.nodes.get("BRUSH DETAIL")
+        brush_det = node_tree.nodes.get("BRUSH_SETTINGS")
         if brush_det is not None:
             node_tree.links.new(brush_det.outputs[0], v_brush_settings.inputs[0])
         else:
