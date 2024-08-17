@@ -242,7 +242,18 @@ class PCL4_PT_PencilLineList(PCL4_PT_PencilLineList_mixin, bpy.types.Panel):
         right_col = row2.column()
         right_col.operator("pcl4.line_list_remove_item", text="Remove")
         right_col.enabled = tree.get_selected_line() is not None
+        
+        prefs = bpy.context.preferences.addons["goo-outputsetup"].preferences
+        row2 = left_col.row(align=True)
+        row2.operator(
+            "setup.quickaddpsoft",
+            text="Auto Add Line Set",
+            icon="OUTLINER_OB_GREASEPENCIL",
+        )
+        row3 = right_col.row(align=True)
+        row3.prop(prefs, "auto_line_name", text="Line Name")
 
+        
         split = split.split(factor=1.0)
         right_col = split.column()
         right_col.separator(factor=4.0)
