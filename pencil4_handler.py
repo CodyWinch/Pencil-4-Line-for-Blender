@@ -87,7 +87,7 @@ def on_post_frame_change(scene: bpy.types.Scene, depsgraph: bpy.types.Depsgraph)
         og_mode = render.image_settings.color_mode
         og_depth = render.image_settings.color_depth
 
-        render.resolution_percentage = 110
+        render.resolution_percentage = 100
         render.image_settings.file_format = "PNG"
         render.image_settings.color_mode = "RGBA"
         render.image_settings.color_depth = "16"
