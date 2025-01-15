@@ -100,7 +100,7 @@ class LineSetNode(bpy.types.Node, PencilNodeMixin):
 
     # v intersection
     v_intersection_on: bpy.props.BoolProperty(default=True, override={'LIBRARY_OVERRIDABLE'})
-    v_intersection_self: bpy.props.BoolProperty(default=False, override={'LIBRARY_OVERRIDABLE'})
+    v_intersection_self: bpy.props.BoolProperty(default=True, override={'LIBRARY_OVERRIDABLE'})
     v_intersection_specific_on: bpy.props.BoolProperty(default=False, override={'LIBRARY_OVERRIDABLE'})
     v_intersection_specific_on_gui: bpy.props.BoolProperty(get=lambda self: self.v_intersection_specific_on, set=lambda self, value: setattr(self, "v_intersection_specific_on", value),
         update=lambda self, ctx: self.specific_on_changed(ctx, V_INTERSECTION_SOCKET_ID),
