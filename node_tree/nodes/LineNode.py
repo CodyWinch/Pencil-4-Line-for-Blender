@@ -36,8 +36,8 @@ class LineNode(bpy.types.Node, PencilNodeMixin):
     line_size_type: bpy.props.EnumProperty(items=line_size_type_items, default="RELATIVE", override={'LIBRARY_OVERRIDABLE'})
 
     is_output_to_render_elements_only: bpy.props.BoolProperty(default=False, override={'LIBRARY_OVERRIDABLE'})
-    over_sampling: bpy.props.IntProperty(default=1, min=1, max=4, override={'LIBRARY_OVERRIDABLE'})
-    antialiasing: bpy.props.FloatProperty(default=0.0, min=0.0, max=2.0, step=1.0, override={'LIBRARY_OVERRIDABLE'})
+    over_sampling: bpy.props.IntProperty(default=3, min=1, max=4, override={'LIBRARY_OVERRIDABLE'})
+    antialiasing: bpy.props.FloatProperty(default=1.0, min=0.0, max=2.0, step=1.0, override={'LIBRARY_OVERRIDABLE'})
     off_screen_distance: bpy.props.FloatProperty(default=150.0, min=0.0, max=1000.0, subtype="PIXEL", override={'LIBRARY_OVERRIDABLE'})
     random_seed: bpy.props.IntProperty(default=0, min=0, max=65535, override={'LIBRARY_OVERRIDABLE'})
 
